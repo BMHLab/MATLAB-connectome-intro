@@ -21,6 +21,7 @@ load('example_connectome.mat')
 % j. The element (i,j) tells you if region i and j are connected. Regions
 % are also called nodes/verticies and connections are also called edges
 
+
 %% Weighted and unweighted connectomes
 
 % A connectome can either be unweighted or weighted. In an unweighted 
@@ -45,6 +46,7 @@ bin = double(adj > 0);
 % it will have a value of 0. The 'double' command converts the logical to a
 % matrix
 
+
 %% Visualising connectomes
 
 % Often it can be helpful to visualise the connectome in an image. This can
@@ -67,6 +69,7 @@ colormap('jet')
 % relative values, essentially bringing all the values closer together.
 % This allows for more of the colourmap to be sampled.
 
+
 %% Brain Connectivity Toolbox (BCT)
 %
 % The Brain Connectivity Toolbox (https://sites.google.com/site/bctnet/)
@@ -78,6 +81,7 @@ addpath(genpath('../2019_03_03_BCT'));
 
 % Simply replace E:\Desktop\Honours_Data\BCT with the path for the BCT on
 % your computer
+
 
 %% Node degree and strength
 %
@@ -99,6 +103,7 @@ str = strengths_und(adj);
 
 % The network must be weighted for this to work. Again 'str' will be an
 % array containing the strength of each node
+
 
 %% Degree distributions
 %
@@ -122,6 +127,7 @@ title('Degree distribution')
 xlabel('Node degree')
 ylabel('Frequency')
 
+
 %% Strength distribution
 
 % The same can be done to produce a strength distribution 
@@ -130,6 +136,7 @@ hist(str)
 title('Strength distribution')
 xlabel('Node strength')
 ylabel('Frequency')
+
 
 %% Degree and strength distributions - subplots
 
@@ -151,13 +158,14 @@ title('Strength distribution')
 xlabel('Node strength')
 ylabel('Frequency')
 
+
 %% BrainNetViewer - interface
 
 % Download BrainNetViewer (https://www.nitrc.org/projects/bnv/) and unpack.
 % Add this directory to the current path (again change the directory for
 % where you have it
 
-addpath E:\BrainNetViewer
+addpath(genpath('../BrainNet_Viewer'));
 
 % Next you have to run a little function I wrote to get your data into a
 % format BrainNetViewer recognises. It is in the format 
@@ -186,7 +194,7 @@ BrainNetData(COG,deg,str,'Degree',new_labels)
 
 dlmwrite('connections.edge', adj, '\t')
 
-% BrainNetViewer can either be used in one fo two ways. You can either
+% BrainNetViewer can either be used in one of two ways. You can either
 % interact with it using an interface or do everything through the command
 % line.
 
@@ -194,11 +202,11 @@ dlmwrite('connections.edge', adj, '\t')
 
 BrainNet
 
-% You will have to selected a surface, .node file and a .edge file. To
+% Using File > Load File, select a surface, .node file and a .edge file. To
 % select the surface file navigate to the BrainNetViewer folder and then go
 % to Data/SurfTemplate and select a surface (BrainMesh_ICBM152.nv is what I
 % use). I suggest copy what ever surface template you want to use into the
-% folder that BrainNetViewer immediately opens up when you clikc 'Browse'
+% folder that BrainNetViewer immediately opens up when you click 'Browse'
 % to speed things up. Next navigate to your .node file and .edge file.
 % Select 'Ok' and an options menu should appear. Most of the options are
 % self explanatory (under the 'Edge' option in 'Draw Edge' I recommend not
@@ -206,19 +214,77 @@ BrainNet
 % will have to experiment to see what give the best result, or just set it
 % to the max and have no edges drawn).
 
-%% BrainNetViewer - command line
 
-% To run from the command line simply run the following fuction: 
-% BrainNet_generate_views(NodeFileName,EdgeFileName,SurfaceTemplatePath,OutputBaseFilename)
-% This will automatically generate axial, coronal and sagiettal views of
-% the brain. NodeFileName is your .node file, EdgeFileName is the .edge
-% file (although this is optional, enter [] in this spot if you don't want
-% edges), SurfaceTemplatePath is the location of the surface template you 
-% want to use and OutputBaseFilename is what you want to name the output 
-% (don't include the extension).
+%% plotSurfaceRoiBoundary - an alternative visualisation function 
 
-BrainNet_generate_views('Degree.node',[],...
-    'E:\Desktop\Honours_Data\BrainNetViewer\Data\SurfTemplate\BrainMesh_ICBM152.nv','degree');
+% We need to tell MATLAB where the code to do the plotting is located.
+
+addpath(genpath('../plotSurfaceROIBoundary'));
+
+% This function will require some newer (higher-resolution data) which we
+% can import. Note that this contains information for the left and right
+% hemispheres separately ("lh_XXX" and "rh_XXX").
+
+load('dataForPlotting_intro.mat');
+
+% We can then start doing the plotting. plotSurfaceROIBoundary is the main
+% function that does the plotting. It basically takes in a mesh describing
+% the shape of the cortex, as well as how that mesh is supposed to be split
+% up into different regions. You also have to tell it what value should be
+% allocated to each region. It requires its inputs to be formatted and 
+% ordered a certain way. First, we tell it the points (vertices) on the
+% mesh, and how these points join together (faces). Then, we tell it which
+% region each point is allocated to (lh_aparc). Then, we tell it what value
+% to allocate to each region ( str(1:34) - as the left cortex has 34
+% regions in it). The last three inputs format the output plot. 
+
+close all; 
+figure; 
+plotSurfaceROIBoundary(...
+    struct('faces', lh_faces, 'vertices', lh_verts), lh_aparc, ...
+    str(1:34), 'faces', parula, 1);
+
+% Finally, these few lines make the picture look a lot more pretty. 
+
+camlight(80, -10); camlight(-80, -10); view([-90 0]);
+axis off; axis tight; axis equal; 
+
+% Try playing around with this figure! Note that you can zoom in and spin
+% the figure around
+
+
+%% Creating functions
+
+% It's nice to be able to plot a lateral view of the left hemisphere so
+% prettily. But it's a lot to retype if we also want a medial view of that
+% hemisphere - or perhaps views of the right hemisphere. What is the
+% solution to this? We put all of those lines of code inside a function
+% that we can call a lot more simply. That's exactly what's been done in
+% brainplot_wrapper.m. This function has four inputs: the vertices, the
+% faces, the region-allocations, and the data to plot. All the rest of the
+% beautifying is done in the script. Make sure you have a look at that
+% script.
+
+close all;
+figure('Position', [1 1 1000 1000]); 
+
+subplot(2, 2, 1);
+brainplot_wrapper(lh_verts, lh_faces, lh_aparc, str(1:34)); view([-90 0]);
+
+subplot(2, 2, 2); 
+brainplot_wrapper(lh_verts, lh_faces, lh_aparc, str(1:34)); view([90 0]);
+
+subplot(2, 2, 3);
+brainplot_wrapper(rh_verts, rh_faces, rh_aparc, str(42:75)); view([-90 0]);
+
+subplot(2, 2, 4); 
+brainplot_wrapper(rh_verts, rh_faces, rh_aparc, str(42:75)); view([90 0]);
+
+% You might have noticed that similar lines of code are copied several
+% times - one of the things we like to avoid when programming. As an
+% exercise, you should try creating a new function of your own that
+% simplifies even this process. 
+
 
 %% Ploting degree/strength mean and variance across subjects - errorbars
 
@@ -321,7 +387,8 @@ ylabel('Strength')
 xlabel('Subject')
 title('Strength variance across subjects');
 
-%% Ploting node degree/strength mean and variance across subjects - errorbars
+
+%% Ploting node degree/strength mean and variance across regions - errorbars
 
 sub_deg = zeros(length(connectome),length(connectome{1})); 
 sub_str = zeros(length(connectome),length(connectome{1}));
@@ -359,7 +426,8 @@ ylabel('Strength')
 xlabel('Node/Region')
 title('Node strength variance across subjects');
 
-%% Ploting node degree/strength mean and variance across subjects - boxplot
+
+%% Ploting node degree/strength mean and variance across regions - boxplot
 
 close all
 
@@ -370,7 +438,7 @@ ax.XTick = 1:length(connectome{1});
 ax.XTickLabel = Labels;
 ax.XTickLabelRotation = 90;
 ylabel('Degree')
-xlabel('Subject')
+xlabel('Node/Region')
 title('Node degree variance across subjects');
 
 figure('Position', [1 1 1400 600]);
@@ -380,5 +448,5 @@ ax.XTick = 1:length(connectome{1});
 ax.XTickLabel = Labels;
 ax.XTickLabelRotation = 90;
 ylabel('Strength')
-xlabel('Subject')
+xlabel('Node/Region')
 title('Node strength variance across subjects');
