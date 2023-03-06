@@ -14,7 +14,7 @@ Instructions for getting started with MATLAB on our cluster.
 - Leave terminal and open Firefox
 - Install the Brain Connectivity Toolbox
 	- Download the `Brain Connectivity Toolbox` from [https://drive.google.com/file/d/1DmMvRnferBfGe057O-sZwB5jL4j8w1Hu/view](https://drive.google.com/file/d/1DmMvRnferBfGe057O-sZwB5jL4j8w1Hu/view)
-	- Go to your downloads folder (probably at `/home/XXXX0001/kg98_scratch/MYNAME/Downloads`), double click on `BCT.zip`, click `Extract`, and extract it into your personal folder)
+	- Go to your downloads folder (probably at `/home/XXXX0001/Downloads`), double click on `BCT.zip`, click `Extract`, and extract it into your personal folder)
 - Install BrainNet Viewer
 	- Download from [https://www.nitrc.org/projects/bnv/](https://www.nitrc.org/projects/bnv/)
 	- Extract it to `/home/XXXX0001/kg98_scratch/MYNAME/BrainNet_Viewer`
