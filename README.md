@@ -11,6 +11,7 @@ Instructions for getting started with MATLAB on our cluster.
 - Install some of the lab's libraries
 	- Type `git clone https://github.com/BMHLab/MATLAB-connectome-intro` 
 	- Type `git clone https://github.com/StuartJO/plotSurfaceROIBoundary`
+- Leave terminal and open Firefox
 - Install the Brain Connectivity Toolbox
 	- Download the `Brain Connectivity Toolbox` from [https://drive.google.com/file/d/1DmMvRnferBfGe057O-sZwB5jL4j8w1Hu/view](https://drive.google.com/file/d/1DmMvRnferBfGe057O-sZwB5jL4j8w1Hu/view)
 	- Go to your downloads folder (probably at `/home/XXXX0001/kg98_scratch/MYNAME/Downloads`), double click on `BCT.zip`, click `Extract`, and extract it into your personal folder)
