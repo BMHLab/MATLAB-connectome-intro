@@ -74,7 +74,7 @@ colormap('jet')
 % website and unzip. Next you need to create a path pointing to this
 % unziped folder using the command 'addpath'. For instance:
 
-addpath E:\BCT
+addpath(genpath('../2019_03_03_BCT'));
 
 % Simply replace E:\Desktop\Honours_Data\BCT with the path for the BCT on
 % your computer
