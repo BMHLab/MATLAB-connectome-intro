@@ -1,9 +1,10 @@
 function [p,boundary_plot,BOUNDARY] = ...
     brainplot_wrapper(verts, faces, rois, data)
-%BRAINPLOT_WRAPPER Summary of this function goes here
-%   Detailed explanation goes here
+%BRAINPLOT_WRAPPER A wrapper around plotSurfaceROIBoundary
+%   Inputs: verts, faces, roi-allocations, data-to-plot (in order)
+%   Outputs: the same as plotSurfaceROIBoundary
 
-plotSurfaceROIBoundary(...
+[p,boundary_plot,BOUNDARY] = plotSurfaceROIBoundary(...
     struct('faces', faces, 'vertices', verts), rois, ...
     data, 'faces', parula, 1);
 
@@ -13,4 +14,3 @@ camlight(80, -10); camlight(-80, -10); view([-90 0]);
 axis off; axis tight; axis equal; 
 
 end
-
